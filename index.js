@@ -3,22 +3,66 @@ import { OrbitControls } from "./three.js/examples/jsm/controls/OrbitControls.js
 
 let scene, camera, renderer, control;
 
+function skyBox(){
+  let boxGeo = new THREE.BoxGeometry(1000,1000,1000);
+  let loader = new THREE.TextureLoader();
+
+  let right = loader.load('./assets/skybox/dawn_right.png');
+  let left = loader.load('./assets/skybox/dawn_left.png');
+  let top = loader.load('./assets/skybox/dawn_top.png');
+  let bottom = loader.load('./assets/skybox/dawn_bottom.png');
+  let front = loader.load('./assets/skybox/dawn_front.png');
+  let back = loader.load('./assets/skybox/dawn_back.png');
+
+  let boxMat = [
+    new THREE.MeshBasicMaterial({
+      map : right, side: THREE.BackSide
+    }),
+    new THREE.MeshBasicMaterial({
+      map : left, side: THREE.BackSide
+    }),
+    new THREE.MeshBasicMaterial({
+      map : top, side: THREE.BackSide
+    }),
+    new THREE.MeshBasicMaterial({
+      map : bottom, side: THREE.BackSide
+    }),
+    new THREE.MeshBasicMaterial({
+      map : front, side: THREE.BackSide
+    }),
+    new THREE.MeshBasicMaterial({
+      map : back, side: THREE.BackSide
+    })
+  ]
+
+  let boxMesh = new THREE.Mesh(boxGeo, boxMat);
+  scene.add(boxMesh);
+}
+
 function createLight() {
   let light = new THREE.SpotLight("#ffffff", 1);
-  light.position.set(100, 200, 300);
+  light.position.set(300, 200, 300);
   light.castShadow = true;
 
   scene.add(light);
 }
 
+// function createLight2() {
+//   let light = new THREE.AmbientLight("#ffffff", 1);
+//   light.position.set(300, 100, 300);
+//   light.castShadow = true;
+
+//   scene.add(light);
+// }
+
 function createFloor() {
   let floor = new THREE.Mesh(
-    new THREE.BoxGeometry(250, 2, 150),
+    new THREE.BoxGeometry(500, 2, 150),
     new THREE.MeshPhongMaterial({
-      map: new THREE.TextureLoader().load("./assets/floor.png"),
+      map: new THREE.TextureLoader().load("./assets/a.png"), side: THREE.DoubleSide
     })
   );
-  floor.position.set(35, -14, 35);
+  floor.position.set(100, -14, 100);
   floor.rotation.set(0, (Math.PI / 4) * -1, 0);
   floor.receiveShadow = true;
 
@@ -56,7 +100,7 @@ function createPin(x,y,z) {
 
   scene.add(neck);
 
-  //head
+  //  head
   let head = new THREE.Mesh(
     new THREE.SphereGeometry(4, 32, 16),
     new THREE.MeshPhongMaterial({ color: "#ff0000" })
@@ -65,6 +109,16 @@ function createPin(x,y,z) {
   head.castShadow = true;
 
   scene.add(head);
+
+  //top
+  let top = new THREE.Mesh(
+    new THREE.SphereGeometry(4, 32, 16),
+    new THREE.MeshPhongMaterial({ color: "#ffffff" })
+  );
+  top.position.set(0+x, 28+y, 0+z);
+  top.castShadow = true;
+
+  scene.add(top);
 }
 
 function createBall() {
@@ -74,7 +128,7 @@ function createBall() {
       map: new THREE.TextureLoader().load("./assets/bowling-ball.png"),
     })
   );
-  ball.position.set(90, -3, 90);
+  ball.position.set(250, -3, 250);
   ball.rotation.set(Math.PI / 2, Math.PI / 2, Math.PI / 2);
   ball.castShadow = true;
 
@@ -88,7 +142,7 @@ function init() {
     75,
     window.innerWidth / window.innerHeight,
     0.1,
-    1000
+    10000
   );
   // camera.position.set(20, 60, 180);
   camera.position.set(0, 200, 0);
@@ -118,6 +172,10 @@ function init() {
   createPin(-15,0,-60);
   createPin(-45,0,-30);
   createPin(-60,0,-15);
+
+  skyBox();
+
+  // createLight2();
   
 
   control = new OrbitControls(camera, renderer.domElement);
